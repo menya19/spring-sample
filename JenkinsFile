@@ -1,6 +1,9 @@
 @Library('retort-lib') _
 def label = "jenkins-${UUID.randomUUID().toString()}"
 
+// Retort 모듈 설명
+// https://myshare.skcc.com/display/SKCOP/Pipeline+-+Retort+Module+API
+
 def DOCKER_IMAGE = 'boot-sample'
 def K8S_NAMESPACE = 'menya'
 def VERSION = '0.1.1'
@@ -10,7 +13,7 @@ podTemplate(label:label,
         containerTemplate(name: 'maven', image: 'maven:3.5.2-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
         containerTemplate(name: 'docker', image: 'docker', ttyEnabled: true, command: 'cat'),
         containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl', ttyEnabled: true, command: 'cat'),
-        containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm', ttyEnabled: true, command: 'cat')
+        // containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm', ttyEnabled: true, command: 'cat')
     ],
     volumes: [
         hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock'),
@@ -45,29 +48,25 @@ podTemplate(label:label,
             container('kubectl') {
 
               withEnv(['KUBECONFIG=/var/config/menya-test/kube-config-zmon.yml']) {
-//                sh "kubectl get pods --namespace ${K8S_NAMESPACE}"
 //                withFolderProperties{
 //                  sh "echo ${env.DOCKER_REGISTRY}"
 //                }
-
-                  kubeCmd.apply file: 'k8s/deploy.yaml', namespace: K8S_NAMESPACE
+                  // yaml 파일 일부 수정이 필요한 경우
+                  // yaml.update file: 'k8s/deploy.yaml', update: ['.spec.template.spec.key': "value"]
+                  kubeCmd.apply file: 'k8s/deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
                   kubeCmd.apply file: 'k8s/service.yaml', namespace: K8S_NAMESPACE
+                  kubeCmd.apply file: 'k8s/ingress.yaml', namespace: K8S_NAMESPACE
               }
-
-
-//                kubeCmd.apply file: 'k8s/service.yaml', namespace: K8S_NAMESPACE
-//                yaml.update file: 'k8s/deploy.yaml', update: ['.spec.template.spec.containers[0].image': "${HARBOR_REGISTRY}/${DOCKER_IMAGE}:${VERSION}"]
-//                kubeCmd.scale file: 'k8s/deploy.yaml', replicas: '0', namespace: K8S_NAMESPACE
-//                kubeCmd.apply file: 'k8s/deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
             }
         }
+
 //        stage('HELM') {
 //            container('helm') {
-//
 //              withEnv(['KUBECONFIG=/var/config/menya-test/kube-config-zmon.yml']) {
 //                sh 'helm list'
 //              }
 //            }
 //        }
+
     }
 }

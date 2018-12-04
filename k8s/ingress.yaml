@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  generation: 1
+  name: boot-sample-ingress
+  namespace: menya
+spec:
+  rules:
+  - host: boot-sample.zmon.cloud
+    http:
+      paths:
+      - backend:
+          serviceName: boot-sample-service
+          servicePort: 8080
+        path: /
