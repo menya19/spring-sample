@@ -1,13 +1,11 @@
 @Library('retort-lib') _
 def label = "jenkins-${UUID.randomUUID().toString()}"
 
-def ZCP_USERID = 'menya'
 def DOCKER_IMAGE = 'boot-sample'
 def K8S_NAMESPACE = 'menya'
 def VERSION = '0.1.1'
 
 podTemplate(label:label,
-    // serviceAccount: "zcp-system-sa-${ZCP_USERID}",
     containers: [
         containerTemplate(name: 'maven', image: 'maven:3.5.2-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
         containerTemplate(name: 'docker', image: 'docker', ttyEnabled: true, command: 'cat'),

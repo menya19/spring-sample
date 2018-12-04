@@ -1,0 +1,22 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: boot-sample-deployment
+  labels:
+    app: boot-sample
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: boot-sample
+  template:
+    metadata:
+      labels:
+        app: boot-sample
+    spec:
+      containers:
+      - name: boot-sample
+        image: registry.au-syd.bluemix.net/zmon/boot-sample:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always
