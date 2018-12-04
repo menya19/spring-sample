@@ -45,10 +45,13 @@ podTemplate(label:label,
             container('kubectl') {
 
               withEnv(['KUBECONFIG=/var/config/menya-test/kube-config-zmon.yml']) {
-                sh "kubectl get pods --namespace ${K8S_NAMESPACE}"
-                withFolderProperties{
-                  sh "echo ${env.DOCKER_REGISTRY}"
-                }
+//                sh "kubectl get pods --namespace ${K8S_NAMESPACE}"
+//                withFolderProperties{
+//                  sh "echo ${env.DOCKER_REGISTRY}"
+//                }
+
+                  kubeCmd.apply file: 'k8s/deploy.yaml', namespace: K8S_NAMESPACE
+                  kubeCmd.apply file: 'k8s/service.yaml', namespace: K8S_NAMESPACE
               }
 
 
@@ -58,13 +61,13 @@ podTemplate(label:label,
 //                kubeCmd.apply file: 'k8s/deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
             }
         }
-        stage('HELM') {
-            container('helm') {
-
-              withEnv(['KUBECONFIG=/var/config/menya-test/kube-config-zmon.yml']) {
-                sh 'helm list'
-              }
-            }
-        }
+//        stage('HELM') {
+//            container('helm') {
+//
+//              withEnv(['KUBECONFIG=/var/config/menya-test/kube-config-zmon.yml']) {
+//                sh 'helm list'
+//              }
+//            }
+//        }
     }
 }
