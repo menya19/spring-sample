@@ -22,9 +22,9 @@ podTemplate(label:label,
     ]) {
 
     node(label) {
-//        stage('SOURCE CHECKOUT') {
-//            def repo = checkout scm
-//        }
+        stage('SOURCE CHECKOUT') {
+            def repo = checkout scm
+        }
 
 //        stage('BUILD MAVEN') {
 //            container('maven') {
