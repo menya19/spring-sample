@@ -35,11 +35,9 @@ podTemplate(label:label,
 
         stage('BUILD DOCKER IMAGE') {
             container('docker') {
-                withEnv(['KUBECONFIG=/var/config/menya-test/kube-config-zmon.yml']) {
-                    withFolderProperties{
-                        dockerCmd.build tag: "${env.DOCKER_REGISTRY}/${DOCKER_IMAGE}:${VERSION}"
-                        dockerCmd.push registry: env.DOCKER_REGISTRY, imageName: DOCKER_IMAGE, imageVersion: VERSION, credentialsId:"ibmcloud_token"
-                    }
+                withFolderProperties{
+                    dockerCmd.build tag: "${env.DOCKER_REGISTRY}/${DOCKER_IMAGE}:${VERSION}"
+                    dockerCmd.push registry: env.DOCKER_REGISTRY, imageName: DOCKER_IMAGE, imageVersion: VERSION, credentialsId:"ibmcloud_token"
                 }
             }
         }
