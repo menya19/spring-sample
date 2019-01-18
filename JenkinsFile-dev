@@ -46,7 +46,7 @@ podTemplate(label:label,
               withEnv(['KUBECONFIG=/var/config/zmon-dev/kube-config-zmon.yml']) {
                   // yaml 파일 일부 수정이 필요한 경우
                   // yaml.update file: 'k8s/deploy.yaml', update: ['.spec.template.spec.key': "value"]
-                  kubeCmd.describe namespace: 'zmon'
+                  sh 'kubectl get namespace'
 //                  kubeCmd.apply file: 'k8s/dev-deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
 //                  kubeCmd.apply file: 'k8s/service.yaml', namespace: K8S_NAMESPACE
 //                  kubeCmd.apply file: 'k8s/dev-ingress.yaml', namespace: K8S_NAMESPACE
