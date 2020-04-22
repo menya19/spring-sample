@@ -17,7 +17,7 @@ podTemplate(label:label,
     ],
     volumes: [
         configMapVolume(mountPath: '/var/jenkins_home/k8s', configMapName: 'aws-zmon-service-config'),
-        persistentVolumeClaim(mountPath: '/var/maven_repo/.m2', claimName: 'mvn-repo')
+        persistentVolumeClaim(mountPath: '/var/maven_repo/.m2', claimName: 'zmon-jenkins-mvn-repo')
     ]) {
 
     node(label) {
