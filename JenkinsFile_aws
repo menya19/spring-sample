@@ -1,0 +1,68 @@
+@Library('retort-lib') _
+def label = "jenkins-${UUID.randomUUID().toString()}"
+
+// Retort 모듈 설명
+// https://myshare.skcc.com/display/SKCOP/Pipeline+-+Retort+Module+API
+
+def DOCKER_IMAGE = 'boot-sample'
+def K8S_NAMESPACE = 'menya'
+def VERSION = '0.1.1'
+
+podTemplate(label:label,
+    containers: [
+        containerTemplate(name: 'maven', image: 'maven:3.5.2-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
+        containerTemplate(name: 'docker', image: 'docker', ttyEnabled: true, command: 'cat', envVars: [
+          envVar(key: 'DOCKER_HOST', value: 'tcp://jenkins-dind-service:2375 ')]),
+        containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl', ttyEnabled: true, command: 'cat')
+    ],
+    volumes: [
+        configMapVolume(mountPath: '/var/jenkins_home/k8s', configMapName: 'aws-zmon-service-config'),
+        persistentVolumeClaim(mountPath: '/var/maven_repo/.m2', claimName: 'mvn-repo')
+    ]) {
+
+    node(label) {
+        stage('SOURCE CHECKOUT') {
+            def repo = checkout scm
+        }
+
+        stage('BUILD MAVEN') {
+            container('maven') {
+                mavenBuild goal: 'clean package', systemProperties:['maven.repo.local':"/var/maven_repo/.m2/${JOB_NAME}"], options: '-Dmaven.test.skip=true'
+            }
+        }
+
+        stage('BUILD DOCKER IMAGE') {
+            container('docker') {
+                withFolderProperties{
+                    dockerCmd.build tag: "${env.DOCKER_REGISTRY}/${DOCKER_IMAGE}:${VERSION}"
+                    dockerCmd.push registry: env.DOCKER_REGISTRY, imageName: DOCKER_IMAGE, imageVersion: VERSION, credentialsId:"ibmcloud_token"
+                }
+            }
+        }
+
+        stage('DEPLOY') {
+            container('kubectl') {
+
+              withEnv(['KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yml']) {
+//                withFolderProperties{
+//                  sh "echo ${env.DOCKER_REGISTRY}"
+//                }
+                  // yaml 파일 일부 수정이 필요한 경우
+                  // yaml.update file: 'k8s/deploy.yaml', update: ['.spec.template.spec.key': "value"]
+                  kubeCmd.apply file: 'k8s/deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
+                  kubeCmd.apply file: 'k8s/service.yaml', namespace: K8S_NAMESPACE
+                  kubeCmd.apply file: 'k8s/ingress.yaml', namespace: K8S_NAMESPACE
+              }
+            }
+        }
+
+//        stage('HELM') {
+//            container('helm') {
+//              withEnv(['KUBECONFIG=/var/config/menya-test/kube-config-zmon.yml']) {
+//                sh 'helm list'
+//              }
+//            }
+//        }
+
+    }
+}

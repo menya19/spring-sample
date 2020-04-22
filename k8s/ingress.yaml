@@ -6,7 +6,7 @@ metadata:
   namespace: menya
 spec:
   rules:
-  - host: boot-sample.zmon.cloud
+  - host: boot-sample.aws2.zmon.club
     http:
       paths:
       - backend:
