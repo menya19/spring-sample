@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: boot-sample
-        image: registry.au-syd.bluemix.net/zmon/boot-sample:0.1.1
+        image: au.icr.io/zmon/boot-sample:0.1.1
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
