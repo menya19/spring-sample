@@ -16,7 +16,7 @@ podTemplate(label:label,
         containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl', ttyEnabled: true, command: 'cat')
     ],
     volumes: [
-        configMapVolume(mountPath: '/var/jenkins_home/k8s', configMapName: 'aws-zmon-service-config'),
+        // configMapVolume(mountPath: '/var/jenkins_home/k8s', configMapName: 'aws-zmon-service-config'),
         persistentVolumeClaim(mountPath: '/var/maven_repo/.m2', claimName: 'zmon-jenkins-mvn-repo')
     ]) {
 
