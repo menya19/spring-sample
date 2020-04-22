@@ -44,7 +44,7 @@ podTemplate(label:label,
         stage('DEPLOY') {
             container('kubectl') {
 
-              withEnv(['KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yml']) {
+              withEnv(['KUBECONFIG=/var/config/jenkins/aws-zmon-service-config.yml']) {
 //                withFolderProperties{
 //                  sh "echo ${env.DOCKER_REGISTRY}"
 //                }
