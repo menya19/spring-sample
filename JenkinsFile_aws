@@ -15,7 +15,7 @@ podTemplate(label:label,
         //  envVar(key: 'DOCKER_HOST', value: 'tcp://jenkins-dind-service:2375 ')]),
         containerTemplate(name: 'docker', image: 'docker:17-dind', ttyEnabled: true, command: 'dockerd-entrypoint.sh', privileged: true),
         containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl', ttyEnabled: true, command: 'cat'),
-        containerTemplate(name: 'aws', image: 'amazon/aws-cli', ttyEnabled: true, command: 'cat')
+        containerTemplate(name: 'aws', image: 'menya/zmon-docker-aws-kubectl:0.1', ttyEnabled: true, command: 'cat')
     ],
     volumes: [
         configMapVolume(mountPath: '/var/jenkins_home/k8s', configMapName: 'aws-zmon-service-config'),
