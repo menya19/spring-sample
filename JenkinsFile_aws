@@ -16,7 +16,7 @@ podTemplate(label:label,
         containerTemplate(name: 'docker', image: 'docker:17-dind', ttyEnabled: true, command: 'dockerd-entrypoint.sh', privileged: true),
         containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl', ttyEnabled: true, command: 'cat'),
         // containerTemplate(name: 'aws', image: 'menya/zmon-docker-aws-kubectl:0.1', ttyEnabled: true, command: 'cat')
-        containerTemplate(name: 'aws', image: 'bearengineer/awscli-kubectl', ttyEnabled: true, command: 'cat')
+        // containerTemplate(name: 'aws', image: 'bearengineer/awscli-kubectl', ttyEnabled: true, command: 'cat')
 
     ],
     volumes: [
@@ -45,8 +45,7 @@ podTemplate(label:label,
         }
 **/
         stage('DEPLOY') {
-            container('aws') {
-
+            container('kubectl') {
               withEnv(['KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yaml']) {
                   sleep 888888
                   sh 'export KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yaml'
