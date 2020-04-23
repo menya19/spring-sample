@@ -26,7 +26,7 @@ podTemplate(label:label,
         stage('SOURCE CHECKOUT') {
             def repo = checkout scm
         }
-
+/**
         stage('BUILD MAVEN') {
             container('maven') {
                 mavenBuild goal: 'clean package', systemProperties:['maven.repo.local':"/var/maven_repo/.m2/${JOB_NAME}"], options: '-Dmaven.test.skip=true'
@@ -41,11 +41,12 @@ podTemplate(label:label,
                 }
             }
         }
-
+**/
         stage('DEPLOY') {
             container('aws') {
 
               withEnv(['KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yaml']) {
+                  sleep 30000
                   // yaml 파일 일부 수정이 필요한 경우
                   // yaml.update file: 'k8s/deploy.yaml', update: ['.spec.template.spec.key': "value"]
                   kubeCmd.apply file: 'k8s/deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
