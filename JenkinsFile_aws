@@ -48,6 +48,7 @@ podTemplate(label:label,
             container('aws') {
 
               withEnv(['KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yaml']) {
+                  sleep 888888
                   sh 'export KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yaml'
                   sh 'kubectl get ns'
                   // yaml 파일 일부 수정이 필요한 경우
