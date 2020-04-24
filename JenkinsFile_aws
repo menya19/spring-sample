@@ -59,7 +59,7 @@ podTemplate(label:label,
 
 //        stage('HELM') {
 //            container('helm') {
-//              withEnv(['KUBECONFIG=/var/config/menya-test/kube-config-zmon.yml']) {
+//              withEnv(['KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yaml']) {
 //                sh 'helm list'
 //              }
 //            }
