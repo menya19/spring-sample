@@ -28,13 +28,13 @@ podTemplate(label:label,
             def repo = checkout scm
         }
 
-        stage('BUILD MAVEN') {
-            container('maven') {
-                // 4. 변경할 부분
-                mavenBuild goal: 'clean package', systemProperties:['maven.repo.local':"/var/maven_repo/.m2/${JOB_NAME}"], options: '-Dmaven.test.skip=true'
-            }
-        }
-
+//        stage('BUILD MAVEN') {
+//            container('maven') {
+//                // 4. 변경할 부분
+//                mavenBuild goal: 'clean package', systemProperties:['maven.repo.local':"/var/maven_repo/.m2/${JOB_NAME}"], options: '-Dmaven.test.skip=true'
+//            }
+//        }
+/**
         stage('BUILD DOCKER IMAGE') {
             container('docker') {
                 withFolderProperties{
@@ -43,7 +43,7 @@ podTemplate(label:label,
                 }
             }
         }
-
+**/
         stage('DEPLOY') {
             container('kubectl') {
               // 5. 변경할 부분
