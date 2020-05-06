@@ -48,6 +48,9 @@ podTemplate(label:label,
             container('kubectl') {
               // 5. 변경할 부분
               withEnv(['KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yaml']) {
+                  sh 'kubectl config view'
+                  sh 'export KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yaml'
+                  sh 'kubectl config view'
                   // yaml 파일 일부 수정이 필요한 경우
                   // yaml.update file: 'k8s/deploy.yaml', update: ['.spec.template.spec.key': "value"]
                   kubeCmd.apply file: 'k8s/deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
