@@ -19,7 +19,7 @@ podTemplate(label:label,
     volumes: [
         // 2. 변경할 부분
         // configMapVolume(mountPath: '/var/jenkins_home/k8s', configMapName: 'aws-zmon-service-config'),
-        persistentVolumeClaim(mountPath: '/var/jenkins_home/k8s', configMapName: 'aws-zmon-service-config'),
+        persistentVolumeClaim(mountPath: '/var/jenkins_home/k8s', claimName: 'zmon-jenkins'),
         // 3. 변경할 부분
         persistentVolumeClaim(mountPath: '/var/maven_repo/.m2', claimName: 'zmon-jenkins-mvn-repo')
     ]) {
