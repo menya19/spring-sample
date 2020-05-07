@@ -6,7 +6,7 @@ metadata:
   namespace: zmon
 spec:
   rules:
-  - host: boot-sample.zmon-dev.seo01.containers.appdomain.cloud
+  - host: boot-sample.dev.zmon.club
     http:
       paths:
       - backend:

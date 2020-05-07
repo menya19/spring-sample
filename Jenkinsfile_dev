@@ -11,14 +11,15 @@ def VERSION = '0.1.1'
 podTemplate(label:label,
     containers: [
         containerTemplate(name: 'maven', image: 'maven:3.5.2-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
-        containerTemplate(name: 'docker', image: 'docker', ttyEnabled: true, command: 'cat'),
-        containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl', ttyEnabled: true, command: 'cat'),
-        // containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm', ttyEnabled: true, command: 'cat')
+        // 1. 변경할 부분
+        containerTemplate(name: 'docker', image: 'docker:17-dind', ttyEnabled: true, command: 'dockerd-entrypoint.sh', privileged: true),
+        containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl', ttyEnabled: true, command: 'cat')
     ],
     volumes: [
-        hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock'),
-        configMapVolume(mountPath: '/var/config/zmon', configMapName: 'zmon-dev-kube-config'),
-        persistentVolumeClaim(mountPath: '/root/.m2', claimName: 'zcp-jenkins-mvn-repo')
+        // 2. 변경할 부분
+        persistentVolumeClaim(mountPath: '/var/jenkins_home', claimName: 'zmon-jenkins'),
+        // 3. 변경할 부분
+        persistentVolumeClaim(mountPath: '/var/maven_repo/.m2', claimName: 'zmon-jenkins-mvn-repo')
     ]) {
 
     node(label) {
@@ -28,7 +29,8 @@ podTemplate(label:label,
 
         stage('BUILD MAVEN') {
             container('maven') {
-                mavenBuild goal: 'clean package', systemProperties:['maven.repo.local':"/root/.m2/${JOB_NAME}"], options: '-Dmaven.test.skip=true'
+                // 4. 변경할 부분
+                mavenBuild goal: 'clean package', systemProperties:['maven.repo.local':"/var/maven_repo/.m2/${JOB_NAME}"], options: '-Dmaven.test.skip=true'
             }
         }
 
@@ -43,7 +45,8 @@ podTemplate(label:label,
 
         stage('DEPLOY') {
             container('kubectl') {
-              withEnv(['KUBECONFIG=/var/config/zmon/kube-config-zmon-dev.yml']) {
+              // 5. 변경할 부분
+              withEnv(['KUBECONFIG=/var/jenkins_home/k8s/iks-zmon-dev-kubeconfig.yaml']) {
                   // yaml 파일 일부 수정이 필요한 경우
                   // yaml.update file: 'k8s/deploy.yaml', update: ['.spec.template.spec.key': "value"]
                   kubeCmd.apply file: 'k8s/dev-deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
@@ -55,7 +58,7 @@ podTemplate(label:label,
 
 //        stage('HELM') {
 //            container('helm') {
-//              withEnv(['KUBECONFIG=/var/config/zmon-dev/kube-config-zmon.yml']) {
+//              withEnv(['KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yaml']) {
 //                sh 'helm list'
 //              }
 //            }
