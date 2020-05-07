@@ -18,8 +18,8 @@ podTemplate(label:label,
     ],
     volumes: [
         // 2. 변경할 부분
-        //persistentVolumeClaim(mountPath: '/var/jenkins_home', claimName: 'zmon-jenkins'),
-        configMapVolume(mountPath: '/var/jenkins_home/k8s', configMapName: 'aws-zmon-service-config'),
+        persistentVolumeClaim(mountPath: '/var/jenkins_home', claimName: 'zmon-jenkins'),
+        //configMapVolume(mountPath: '/var/jenkins_home/k8s', configMapName: 'aws-zmon-service-config'),
         // 3. 변경할 부분
         persistentVolumeClaim(mountPath: '/var/maven_repo/.m2', claimName: 'zmon-jenkins-mvn-repo')
     ]) {
@@ -52,6 +52,7 @@ podTemplate(label:label,
                   sh 'kubectl config view'
                   //sh 'export KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yaml'
                   //sh 'kubectl config view'
+                  sleep 800000
                   // yaml 파일 일부 수정이 필요한 경우
                   // yaml.update file: 'k8s/deploy.yaml', update: ['.spec.template.spec.key': "value"]
                   kubeCmd.apply file: 'k8s/deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
