@@ -30,7 +30,7 @@ podTemplate(label:label,
         stage('BUILD MAVEN') {
             container('maven') {
                 // 4. 변경할 부분
-                mavenBuild goal: 'clean package', systemProperties:['maven.repo.local':"/var/maven_repo/.m2/${JOB_NAME}"], options: '-Dmaven.test.skip=true'
+                mavenBuild goal: 'clean package', systemProperties:['maven.repo.local':"/var/maven_repo/.m2"], options: '-Dmaven.test.skip=true'
             }
         }
 
