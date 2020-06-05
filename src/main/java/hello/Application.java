@@ -14,7 +14,7 @@ public class Application {
         return "Hello Docker World";
     }
     @RequestMapping("/alert-manager")
-    public String home() {
+    public String alert() {
         return "Hello Docker World";
     }
 
