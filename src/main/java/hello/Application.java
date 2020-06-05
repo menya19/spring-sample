@@ -15,10 +15,11 @@ public class Application {
     }
     @RequestMapping("/alert-manager")
     public String alert() {
-        return "Hello Docker World";
+        return "Hello Docker World. alert-manager";
     }
 
     public static void main(String[] args) {
+        System.setProperty("server.servlet.context-path", "/alert-manager");
         SpringApplication.run(Application.class, args);
     }
 
