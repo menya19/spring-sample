@@ -1,7 +1,7 @@
 server:
   port: 8080
-  context-path: /alert-manager
-
+  servlet:
+    context-path: /alert-manager
 #TODO: figure out why I need this here and in bootstrap.yml
 spring:
   application:
