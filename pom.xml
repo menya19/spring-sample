@@ -5,7 +5,7 @@
 
     <groupId>org.springframework</groupId>
     <artifactId>spring-sample</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.2</version>
     <packaging>jar</packaging>
     <name>spring-sample</name>
     <description>spring-sample</description>

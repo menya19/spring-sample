@@ -6,7 +6,7 @@ def label = "jenkins-${UUID.randomUUID().toString()}"
 
 def DOCKER_IMAGE = 'boot-sample'
 def K8S_NAMESPACE = 'menya'
-def VERSION = '0.1.1'
+def VERSION = '0.1.2'
 
 podTemplate(label:label,
     containers: [
