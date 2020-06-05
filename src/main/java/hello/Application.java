@@ -19,7 +19,7 @@ public class Application {
     }
 
     public static void main(String[] args) {
-        System.setProperty("server.servlet.context-path", "/alert-manager");
+        // System.setProperty("server.servlet.context-path", "/alert-manager");
         SpringApplication.run(Application.class, args);
     }
 
