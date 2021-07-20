@@ -43,7 +43,7 @@ podTemplate(label:label,
             container('kubectl') {
               // 5. 변경할 부분
               withEnv(['KUBECONFIG=/var/jenkins_home/k8s/aia-dev-kubeconfig.yaml']) {
-                  kubeCmd.apply file: 'k8s/deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
+                  kubeCmd.apply file: 'k8s/aia-deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
                   kubeCmd.apply file: 'k8s/service.yaml', namespace: K8S_NAMESPACE
                   kubeCmd.apply file: 'k8s/aia-ingress.yaml', namespace: K8S_NAMESPACE
               }
