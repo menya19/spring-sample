@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: boot-sample
+  labels:
+    app: boot-sample
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: boot-sample
+  template:
+    metadata:
+      labels:
+        app: boot-sample
+    spec:
+      containers:
+      - name: boot-sample
+        image: aiamcmp.azurecr.io/zmon/boot-sample:0.1.2
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always
