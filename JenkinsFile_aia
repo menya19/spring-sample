@@ -1,0 +1,62 @@
+@Library('retort-lib') _
+def label = "jenkins-${UUID.randomUUID().toString()}"
+
+// Retort 모듈 설명
+// https://myshare.skcc.com/display/SKCOP/Pipeline+-+Retort+Module+API
+
+def DOCKER_IMAGE = 'boot-sample'
+def K8S_NAMESPACE = 'zmon-service'
+def VERSION = '0.1.2'
+
+podTemplate(label:label,
+    containers: [
+        containerTemplate(name: 'maven', image: 'maven:3.5.2-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
+        containerTemplate(name: 'docker', image: 'docker:17-dind', ttyEnabled: true, command: 'dockerd-entrypoint.sh', privileged: true),
+        containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl', ttyEnabled: true, command: 'cat')
+    ],
+    volumes: [
+        persistentVolumeClaim(mountPath: '/var/jenkins_home', claimName: 'zmon-jenkins'),
+        persistentVolumeClaim(mountPath: '/var/maven_repo/.m2', claimName: 'zmon-jenkins-mvn-repo')
+    ]) {
+
+    node(label) {
+        stage('SOURCE CHECKOUT') {
+            def repo = checkout scm
+        }
+
+        stage('BUILD MAVEN') {
+            container('maven') {
+                mavenBuild goal: 'clean package', systemProperties:['maven.repo.local':"/var/maven_repo/.m2"], options: '-Dmaven.test.skip=true'
+            }
+        }
+
+        stage('BUILD DOCKER IMAGE') {
+            container('docker') {
+                withFolderProperties{
+                dockerCmd.build tag: "${env.AZURE_REG_LOGINSERVER}/${DOCKER_IMAGE}:${VERSION}", options: "--network=host"
+                dockerCmd.push registry: env.AZURE_REG_LOGINSERVER, imageName: DOCKER_IMAGE, imageVersion: VERSION, credentialsId:"aia_acr_credentials"
+                }
+            }
+        }
+
+        stage('DEPLOY') {
+            container('kubectl') {
+              // 5. 변경할 부분
+              withEnv(['KUBECONFIG=/var/jenkins_home/k8s/aia-dev-kubeconfig.yaml']) {
+                  kubeCmd.apply file: 'k8s/deploy.yaml', namespace: K8S_NAMESPACE, wait: 300
+                  kubeCmd.apply file: 'k8s/service.yaml', namespace: K8S_NAMESPACE
+                  kubeCmd.apply file: 'k8s/aia-ingress.yaml', namespace: K8S_NAMESPACE
+              }
+            }
+        }
+
+//        stage('HELM') {
+//            container('helm') {
+//              withEnv(['KUBECONFIG=/var/jenkins_home/k8s/aws-zmon-service-config.yaml']) {
+//                sh 'helm list'
+//              }
+//            }
+//        }
+
+    }
+}

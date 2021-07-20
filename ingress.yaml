@@ -1,0 +1,23 @@
+kind: Ingress
+apiVersion: networking.k8s.io/v1beta1
+metadata:
+  name: menya-ingress
+  namespace: menya
+  annotations:
+    ingress.bluemix.net/client-max-body-size: size=0
+    nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    nginx.ingress.kubernetes.io/auth-type: basic
+spec:
+  rules:
+    - host: menya.zmon.cloud
+      http:
+        paths:
+          - path: /alert-manager
+            backend:
+              serviceName: boot-sample-service
+              servicePort: 8080
+          - path: /
+            backend:
+              serviceName: listener-menya
+              servicePort: 18080
